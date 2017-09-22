@@ -1,2 +1,6 @@
 /.idea
 /*.iml
+/logs
+/tool-amap/target
+/tool-common/target
+*.iml
