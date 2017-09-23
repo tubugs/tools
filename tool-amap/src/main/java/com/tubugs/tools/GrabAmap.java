@@ -24,9 +24,6 @@ public class GrabAmap {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private ExecutorService threadPool = Executors.newFixedThreadPool(8);
 
-    //结果保存路径
-    @Value("${tubugs.amap.save.path}")
-    private String savePath;
     //结果文本
     private StringBuilder saveContent = new StringBuilder();
 
@@ -84,7 +81,7 @@ public class GrabAmap {
         }
 
         //5、保存结果到本地文件
-        FileUtil.save(savePath, saveContent.toString());
+        FileUtil.save(ResourceUtil.getAbsolutePath("output.txt"), saveContent.toString());
         System.exit(0);
     }
 }
