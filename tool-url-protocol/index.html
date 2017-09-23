@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>打开本地应用</title>
+    <style>
+        img {
+            display: block;
+            padding: 5px 0;
+        }
+    </style>
+</head>
+<body>
+<ul>打开本地应用，使用了URL Protocol协议，自定义URL Protocol需要修改注册表</ul>
+
+<ul>如何修改注册表？
+    <li>运行regedit，打开注册表</li>
+    <li>在注册表的 [HKEY_CLASSES_ROOT] 主键下建立 [notepad] 键。[notepad] 此键可以自定义名称。</li>
+    <li>
+        参考下图，添加对应值
+        <img src="1.png">
+        <img src="2.png">
+        <img src="3.png">
+    </li>
+    <li>其他：除了手动修改，也可以直接通过脚本修改，下载<a href="notepad.reg" target="_blank">修改注册表脚本</a>，直接运行完成修改</li>
+</ul>
+
+<ul>点击链接，打开本地应用
+    <li><a href="notepad:hello">打开本地记事本</a></li>
+    <li><a href="http://blog.tubugs.cn/images/avatar.jpg" id="thunder">打开迅雷（下载一张图片）</a></li>
+     <!--QQ客服需要做些设置，具体参考http://jingyan.baidu.com/article/e8cdb32b47f2ea37052badbe.html?st=2&os=0&bd_page_type=1&net_type=2-->
+    <li><a href="tencent://message/?uin=2508658887&Site=&Menu=yes">QQ客服</a></li>
+</ul>
+
+
+<script src="base64.js"></script>
+<script>
+    function handleThunderLink() {
+        //迅雷链接地址转换原理是在地址的前方和后方加入两个字母AA、ZZ，然后再进行Base64加密，再加上Thunder://这个专用链接标识，从而转换成迅雷的专用地址。
+        var dom = document.getElementById("thunder");
+        var href = dom.getAttribute("href");
+        console.log(href);
+        var newHref = "thunder://" + Base64.encode("AA" + href + "ZZ");
+        console.log(newHref)
+        dom.setAttribute("href", newHref);
+    }
+
+    handleThunderLink();
+</script>
+</body>
+</html>
