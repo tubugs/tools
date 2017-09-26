@@ -44,7 +44,13 @@ class GrabTask implements Callable<String> {
             }
             JSONArray steps = jsonObject.getJSONObject("route").getJSONArray("paths").getJSONObject(0).getJSONArray("steps");
             String[] points = steps.stream().map((step) -> ((JSONObject) step).getString("polyline")).collect(Collectors.joining(";")).split(";");
-            String result = Arrays.stream(points).distinct().collect(Collectors.joining(";"));
+            String result = Arrays.stream(points).distinct().map(
+                    (item) -> {
+                        String[] items = item.split(",");
+                        String[] results = CoordinateUtil.gcj02towgs84(items[0], items[1]);
+                        return Arrays.stream(results).collect(Collectors.joining(","));
+                    }
+            ).collect(Collectors.joining(";"));
             return String.format("%s\t%s\t%s", from_id, to_id, result);
         } catch (Exception ex) {
             logger.error(url, ex);
@@ -56,8 +62,11 @@ class GrabTask implements Callable<String> {
     public String call() throws Exception {
         String[] from = fromPoints.split("\\t");
         String[] to = toPoints.split("\\t");
+        //谷歌坐标转高德坐标
+        String[] fromPoints = CoordinateUtil.wgs84togcj02(from[1], from[2]);
+        String[] toPoints = CoordinateUtil.wgs84togcj02(to[1], to[2]);
         while (tryTimes < 3) {
-            String result = grab(from[0], from[1], from[2], to[0], to[1], to[2]);
+            String result = grab(from[0], fromPoints[0], fromPoints[1], to[0], toPoints[0], toPoints[1]);
             if (!StringUtils.isEmpty(result)) {
                 logger.info("task {}-{} complete", total, num);
                 return result;
